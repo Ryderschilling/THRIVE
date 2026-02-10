@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum InquiryType {
+  EMAIL_OPTIN
+  RETREAT_REQUEST
+  COACHING_REQUEST
+  GENERAL
+}
+
+enum InquiryStatus {
+  NEW
+  REVIEWING
+  INVITED
+  ACCEPTED
+  DECLINED
+  CLOSED
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String  @unique
+  name  String?
+  phone String?
+
+  address1 String?
+  address2 String?
+  city     String?
+  state    String?
+  postal   String?
+  country  String?
+
+  notes String?
+
+  inquiries Inquiry[]
+}
+
+model Retreat {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  slug      String    @unique
+  title     String
+  address   String?
+  startDate DateTime?
+  endDate   DateTime?
+  spots     Int?
+
+  inquiries RetreatInquiry[]
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type   InquiryType
+  status InquiryStatus @default(NEW)
+
+  about String?
+  why   String?
+
+  paymentIntentId    String?
+  paymentAmountCents Int?
+  paymentCurrency    String?
+  paymentStatus      String?
+
+  source String?
+  utm    String?
+
+  contactId String
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  retreat RetreatInquiry?
+}
+
+model RetreatInquiry {
+  id        String @id @default(cuid())
+  inquiryId String @unique
+  retreatId String
+
+  inquiry Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  retreat Retreat @relation(fields: [retreatId], references: [id], onDelete: Cascade)
+
+  @@index([retreatId])
+}
