@@ -1,56 +1,64 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { getRetreatBySlug } from "@/content/retreats";
+import { retreats } from "@/content/retreats";
 
-export const runtime = "nodejs";
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    const { slug } = await params;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-01-27.acacia",
-});
+    const retreat = retreats.find((r) => String(r.slug).toLowerCase() === String(slug).toLowerCase());
+    if (!retreat) {
+      return NextResponse.json({ error: "Retreat not found" }, { status: 404 });
+    }
 
-export async function POST(req: Request, ctx: { params: { slug: string } }) {
-  try {
-    const slug = decodeURIComponent(String(ctx.params.slug)).trim().toLowerCase();
-    const retreat = getRetreatBySlug(slug);
-    if (!retreat) return NextResponse.json({ error: "Retreat not found." }, { status: 404 });
+    const body = await req.json().catch(() => ({} as any));
+    const amountRaw = body?.amount;
 
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: "Stripe is not configured." }, { status: 500 });
-    }
+    // amount is optional; if missing or invalid, treat as 0 and still return url null
+    const amountNum = typeof amountRaw === "number" ? amountRaw : Number(amountRaw);
+    const amountCents = Number.isFinite(amountNum) && amountNum > 0 ? Math.round(amountNum * 100) : 0;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const body = await req.json();
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "Missing STRIPE_SECRET_KEY" }, { status: 500 });
+    }
 
-    const amountCents = Number(body?.amountCents || 0);
-    const email = body?.email ? String(body.email).trim().toLowerCase() : undefined;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    });
 
-    if (!Number.isFinite(amountCents) || amountCents < 100) {
-      return NextResponse.json({ error: "Donation must be at least $1.00." }, { status: 400 });
-    }
+    // If no donation, your client can just skip redirect/confirm and proceed
+    if (amountCents <= 0) {
+      return NextResponse.json({ url: null });
+    }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      customer_email: email,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "usd",
-            unit_amount: amountCents,
-            product_data: {
-              name: "THRIVE Donation",
-              description: `Optional donation — ${retreat.title}`,
-            },
-          },
-        },
-      ],
-      success_url: `${siteUrl}/retreats/${encodeURIComponent(retreat.slug)}/apply?donation=success`,
-      cancel_url: `${siteUrl}/retreats/${encodeURIComponent(retreat.slug)}/apply?donation=cancel`,
-      metadata: { retreatSlug: retreat.slug },
-    });
+    const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-    return NextResponse.json({ url: session.url });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Stripe error." }, { status: 500 });
-  }
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: `Donation — ${retreat.title}` },
+            unit_amount: amountCents,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${origin}/retreats/${retreat.slug}/apply?donation=success`,
+      cancel_url: `${origin}/retreats/${retreat.slug}/apply?donation=cancel`,
+      metadata: {
+        retreatSlug: retreat.slug,
+        type: "donation",
+      },
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message ?? error }, { status: 500 });
+  }
 }
