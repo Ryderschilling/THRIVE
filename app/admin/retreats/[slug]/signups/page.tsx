@@ -1,6 +1,8 @@
 import Section from "@/components/site/Section";
 import { db } from "@/lib/db";
 
+type SignupRow = /*whatever you already have here */;
+
 export const runtime = "nodejs";
 
 export default async function SignupsPage(props: {
