@@ -25,21 +25,17 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${cormorant.variable} ${sourceSans.variable} bg-black text-white`}
-      >
-        <Nav />
-
-        <main>{children}</main>
-
-        {/* Verse directly above footer */}
-        <VerseBar />
-
-        <Footer />
-      </body>
-    </html>
-  );
-}
+    return (
+      <html lang="en" suppressHydrationWarning><body
+        suppressHydrationWarning
+        className={`${cormorant.variable} ${sourceSans.variable} bg-black text-white`}
+      >
+        <Nav />
+        <main>{children}</main>
+  
+        {/* Verse directly above footer */}
+        <VerseBar />
+        <Footer />
+      </body></html>
+    );
+  }

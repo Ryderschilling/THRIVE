@@ -53,18 +53,23 @@ export default function CoachingApplyPage() {
     e.preventDefault();
     setState("submitting");
     setError("");
-
-    try {
-      await createCoachingRequest({
-        productSlug: product.slug,
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        address: form.address,
-        about: form.about,
-        why: form.why,
-        source: `coaching/${product.slug}/apply`,
-      });
+  
+if (!product) {
+    setError("This coaching offer could not be found. Please go back and try again.");
+    setState("error");
+    return;
+  }
+  
+  try {
+    await createCoachingRequest({
+        productSlug: product.slug,
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        address: form.address,
+        about: form.about,
+        why: form.why,
+      });
 
       setState("success");
     } catch (err: any) {

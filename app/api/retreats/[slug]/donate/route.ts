@@ -25,9 +25,7 @@ export async function POST(
       return NextResponse.json({ error: "Missing STRIPE_SECRET_KEY" }, { status: 500 });
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     // If no donation, your client can just skip redirect/confirm and proceed
     if (amountCents <= 0) {

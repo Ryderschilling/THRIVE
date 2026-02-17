@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Section from "@/components/site/Section";
-import { retreats } from "@/content/retreats";
+import { getRetreatBySlug } from "@/content/retreats";
 
 function normalizeSlug(v: unknown) {
   return decodeURIComponent(String(v)).trim().toLowerCase();
@@ -15,7 +15,7 @@ export default function RetreatGalleryPage() {
   const slug = normalizeSlug((params as any)?.slug);
 
   const retreat = useMemo(() => {
-    return retreats.find((r) => normalizeSlug(r.slug) === slug);
+    return getRetreatBySlug(slug);
   }, [slug]);
 
   if (!retreat) {
@@ -45,7 +45,7 @@ export default function RetreatGalleryPage() {
 
           <div className="flex gap-3">
             <Link
-              href={`/retreats/${retreat.slug}`}
+              href="/retreats"
               className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-transparent px-5 py-2.5 text-sm tracking-wide text-white/80 hover:bg-white/5 transition"
             >
               Back
@@ -114,7 +114,7 @@ export default function RetreatGalleryPage() {
                 </p>
 
                 <p>
-                  Set in Santa Rosa Beach, Florida (30A), this three-night experience is intentionally crafted to create
+                  Set in Santa Rosa Beach, Florida (30A), this two-night experience is intentionally crafted to create
                   space for rest, reflection, and alignment with God’s purpose—both personally and professionally.
                   While rooted in the local THRIVE community, men will be joining from across the country, creating a
                   unique and divinely aligned intersection of faith, leadership, and brotherhood.
