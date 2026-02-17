@@ -1,16 +1,29 @@
 import Link from "next/link";
 import Section from "@/components/site/Section";
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
 export const runtime = "nodejs";
 
-type SignupRow = Prisma.RetreatInquiryGetPayload<{
-  include: {
-    inquiry: { include: { contact: true } };
-    retreat: true;
+/**
+ * NOTE:
+ * We intentionally avoid Prisma.<Model>GetPayload types here because Vercel's
+ * generated Prisma client can differ from local generation, which breaks builds.
+ * This local type matches exactly what this page renders.
+ */
+type SignupRow = {
+  id: string;
+  inquiry: {
+    createdAt: string | Date;
+    contact: {
+      name: string | null;
+      email: string | null;
+      phone: string | null;
+    } | null;
   };
-}>;
+  retreat: {
+    slug: string;
+  };
+};
 
 export default async function AdminRetreatSignupsPage({
   params,
@@ -19,14 +32,14 @@ export default async function AdminRetreatSignupsPage({
 }) {
   const { slug } = await params;
 
-  const rows: SignupRow[] = await db.retreatInquiry.findMany({
+  const rows = (await db.retreatInquiry.findMany({
     where: { retreat: { slug } },
     orderBy: { inquiry: { createdAt: "desc" } },
     include: {
       inquiry: { include: { contact: true } },
       retreat: true,
     },
-  });
+  })) as unknown as SignupRow[];
 
   return (
     <Section>
