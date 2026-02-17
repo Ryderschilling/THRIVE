@@ -2,42 +2,36 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
+  const token = req.headers.get("x-admin-token");
+  if (!process.env.ADMIN_ACCESS_TOKEN || token !== process.env.ADMIN_ACCESS_TOKEN) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { slug } = await params;
 
-    // NOTE: Keep your existing query logic as-is if yours differs.
-    // This is a safe default: count + list of signups for retreat slug.
-    const signups = await db.inquiry.findMany({
+    const rows = await db.retreatInquiry.findMany({
       where: {
-        type: "RETREAT_REQUEST",
-        retreat: {
-          is: {
-            retreat: {
-              is: { slug },
-            },
-          },
-        },
+        retreat: { slug },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        inquiry: { createdAt: "desc" },
+      },
       include: {
-        contact: true,
-        retreat: {
-          include: {
-            retreat: true,
-          },
-        },
+        inquiry: { include: { contact: true } },
+        retreat: true,
       },
     });
 
     return NextResponse.json({
       retreat: slug,
-      count: signups.length,
-      signups,
+      count: rows.length,
+      signups: rows,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to load signups" }, { status: 500 });
   }
 }
