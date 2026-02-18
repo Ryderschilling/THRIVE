@@ -3,94 +3,240 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-enum InquiryType {
-  EMAIL_OPTIN
-  RETREAT_REQUEST
-  COACHING_REQUEST
-  GENERAL
+model UserSettings {
+  userId           String   @id
+  timezone         String   @default("UTC")
+  dateFormat       String   @default("yyyy-MM-dd")
+  tradingDayCutoff Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
 }
 
-enum InquiryStatus {
-  NEW
-  REVIEWING
-  INVITED
-  ACCEPTED
-  DECLINED
-  CLOSED
+model aggregated_stats {
+  id           String   @id
+  userId       String   @unique
+  totalPnl     Float    @default(0)
+  totalTrades  Int      @default(0)
+  winRate      Float    @default(0)
+  avgWin       Float    @default(0)
+  avgLoss      Float    @default(0)
+  avgTradePnl  Float    @default(0)
+  profitFactor Float    @default(0)
+  bestTicker   String?
+  worstTicker  String?
+  largestWin   Float?
+  largestLoss  Float?
+  callsPnl     Float    @default(0)
+  putsPnl      Float    @default(0)
+  stocksPnl    Float    @default(0)
+  zeroDTEPnl   Float    @default(0)
+  weeklyPnl    Float    @default(0)
+  monthlyPnl   Float    @default(0)
+  mondayPnl    Float    @default(0)
+  tuesdayPnl   Float    @default(0)
+  wednesdayPnl Float    @default(0)
+  thursdayPnl  Float    @default(0)
+  fridayPnl    Float    @default(0)
+  lastUpdated  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Contact {
-  id        String   @id @default(cuid())
+model ai_conversation_history {
+  id        String   @id
+  userId    String
+  role      String
+  content   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  email String  @unique
-  name  String?
-  phone String?
-
-  address1 String?
-  address2 String?
-  city     String?
-  state    String?
-  postal   String?
-  country  String?
-
-  notes String?
-
-  inquiries Inquiry[]
+  @@index([userId, createdAt])
 }
 
-model Retreat {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model broker_executions {
+  id              String   @id
+  userId          String
+  broker          String
+  activityDate    DateTime @db.Date
+  instrument      String
+  description     String?
+  transactionType String
+  quantity        Float
+  price           Float
+  amount          Float
+  rawRowData      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+  uploadId        String
+  users           users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  slug      String    @unique
-  title     String
-  address   String?
-  startDate DateTime?
-  endDate   DateTime?
-  spots     Int?
-
-  inquiries RetreatInquiry[]
+  @@index([userId, activityDate])
+  @@index([userId, broker])
+  @@index([userId, instrument])
+  @@index([userId, transactionType])
 }
 
-model Inquiry {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model daily_performance {
+  id          String   @id
+  userId      String
+  date        DateTime @db.Date
+  netPnl      Float    @default(0)
+  tradeCount  Int      @default(0)
+  winCount    Int      @default(0)
+  lossCount   Int      @default(0)
+  totalVolume Float    @default(0)
+  avgWin      Float?
+  avgLoss     Float?
+  largestWin  Float?
+  largestLoss Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  users       users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type   InquiryType
-  status InquiryStatus @default(NEW)
-
-  about String?
-  why   String?
-
-  paymentIntentId    String?
-  paymentAmountCents Int?
-  paymentCurrency    String?
-  paymentStatus      String?
-
-  source String?
-  utm    String?
-
-  contactId String
-  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-
-  retreat RetreatInquiry?
+  @@unique([userId, date])
+  @@index([userId, date])
 }
 
-model RetreatInquiry {
-  id        String @id @default(cuid())
-  inquiryId String @unique
-  retreatId String
+model goals {
+  id           String   @id
+  userId       String
+  name         String
+  type         String
+  targetValue  Float
+  timeframe    String
+  currentValue Float    @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  inquiry Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
-  retreat Retreat @relation(fields: [retreatId], references: [id], onDelete: Cascade)
+  @@index([userId, isActive])
+}
 
-  @@index([retreatId])
+model journal_entries {
+  id                    String   @id
+  userId                String
+  date                  DateTime @db.Date
+  breakfast             String?
+  caffeine              String?
+  sugar                 String?
+  hydration             String?
+  sleepDuration         String?
+  sleepQuality          String?
+  bedtime               String?
+  wakeFeeling           String?
+  tradingQuality        String?
+  revengeTrading        String?
+  distractions          String?
+  overtrading           String?
+  timeSpentTrading      String?
+  stoppedWhenShouldHave String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime
+  users                 users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model monthly_performance {
+  id         String   @id
+  userId     String
+  year       Int
+  month      Int
+  netPnl     Float    @default(0)
+  tradeCount Int      @default(0)
+  winCount   Int      @default(0)
+  lossCount  Int      @default(0)
+  greenDays  Int      @default(0)
+  redDays    Int      @default(0)
+  bestDay    Float?
+  worstDay   Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  users      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, year, month])
+  @@index([userId, year, month])
+}
+
+model option_metadata {
+  id             String    @id
+  tradeId        String    @unique
+  expirationDate DateTime? @db.Date
+  strikePrice    Float?
+  dayOfWeek      String?
+  is0DTE         Boolean   @default(false)
+  isWeekly       Boolean   @default(false)
+  isMonthly      Boolean   @default(false)
+  trades         trades    @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+}
+
+model raw_csv_rows {
+  id         String   @id
+  userId     String
+  tradeId    String?  @unique
+  rowData    String
+  uploadedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  trades     trades?  @relation(fields: [tradeId], references: [id])
+  users      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, uploadedAt])
+}
+
+model trades {
+  id              String           @id
+  userId          String
+  tradeDate       DateTime
+  ticker          String
+  assetType       String
+  entryPrice      Float
+  exitPrice       Float?
+  quantity        Int
+  contracts       Int?
+  totalInvested   Float
+  totalReturn     Float
+  percentReturn   Float
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime
+  option_metadata option_metadata?
+  raw_csv_rows    raw_csv_rows?
+  users           users            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, assetType])
+  @@index([userId, ticker])
+  @@index([userId, tradeDate])
+}
+
+model users {
+  id                      String                    @id
+  clerkId                 String                    @unique
+  email                   String                    @unique
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime
+  acceptedAIPolicyAt      DateTime?
+  acceptedDisclaimerAt    DateTime?
+  acceptedPrivacyAt       DateTime?
+  acceptedTermsAt         DateTime?
+  stripeCurrentPeriodEnd  DateTime?
+  stripeCustomerId        String?                   @unique
+  stripePriceId           String?
+  stripeSubscriptionId    String?                   @unique
+  subscriptionStatus      String?
+  aggregated_stats        aggregated_stats?
+  ai_conversation_history ai_conversation_history[]
+  broker_executions       broker_executions[]
+  daily_performance       daily_performance[]
+  goals                   goals[]
+  journal_entries         journal_entries[]
+  monthly_performance     monthly_performance[]
+  raw_csv_rows            raw_csv_rows[]
+  trades                  trades[]
 }
