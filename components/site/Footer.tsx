@@ -3,6 +3,8 @@ import Container from "./Container";
 import { site } from "@/content/site";
 
 export default function Footer() {
+  const launchMode = process.env.NEXT_PUBLIC_LAUNCH_MODE === "retreat";
+if (launchMode) return null;
   return (
     <footer className="relative">
         <div className="pointer-events-none absolute -top-10 left-0 right-0 h-10 bg-gradient-to-b from-transparent to-black" />

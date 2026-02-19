@@ -3,6 +3,8 @@ import Container from "./Container";
 import { site } from "@/content/site";
 
 export default function Nav() {
+  const launchMode = process.env.NEXT_PUBLIC_LAUNCH_MODE === "retreat";
+if (launchMode) return null;
   return (
     <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur">
       <Container>
