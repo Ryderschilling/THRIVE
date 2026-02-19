@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 function splitAddress(raw?: string) {
   if (!raw) return {};
   // Keep simple for now. Admin can clean up later.
-  return { address1: raw.trim() };
+  return { address: raw.trim() };
 }
 
 export async function createEmailOptin(args: {
@@ -25,7 +25,6 @@ export async function createEmailOptin(args: {
   await db.inquiry.create({
     data: {
       type: "EMAIL_OPTIN",
-      status: "NEW",
       source: args.source ?? "email-optin",
       contactId: contact.id,
     },
@@ -40,8 +39,7 @@ export async function createRetreatRequest(args: {
   email: string;
   phone: string;
   address: string;
-  about: string;
-  why: string;
+  lookingForward: string; // ✅ single question now
   source?: string;
 }) {
   const retreatSlug = args.retreatSlug.trim();
@@ -75,12 +73,10 @@ export async function createRetreatRequest(args: {
   const inquiry = await db.inquiry.create({
     data: {
       type: "RETREAT_REQUEST",
-      status: "NEW",
-      about: args.about.trim(),
-      why: args.why.trim(),
+      message: args.lookingForward.trim(), // ✅ store text here (schema-safe)
       source: args.source ?? `retreats/${retreatSlug}/apply`,
       contactId: contact.id,
-      retreat: {
+      retreatLink: {
         create: {
           retreatId: retreat.id,
         },
@@ -120,12 +116,18 @@ export async function createCoachingRequest(args: {
     },
   });
 
+  const combinedMessage = [
+    `About: ${args.about.trim()}`,
+    `Why: ${args.why.trim()}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n")
+    .trim();
+
   const inquiry = await db.inquiry.create({
     data: {
       type: "COACHING_REQUEST",
-      status: "NEW",
-      about: args.about.trim(),
-      why: args.why.trim(),
+      message: combinedMessage || null, // ✅ store text here (schema-safe)
       source: args.source ?? `coaching/${productSlug}/apply`,
       contactId: contact.id,
     },

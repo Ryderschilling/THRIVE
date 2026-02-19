@@ -10,7 +10,7 @@ datasource db {
 model Contact {
   id        String   @id @default(cuid())
   name      String?
-  email     String?
+  email     String   @unique
   phone     String?
   address   String?
   createdAt DateTime @default(now())
@@ -37,6 +37,7 @@ model Retreat {
   id        String   @id @default(cuid())
   slug      String   @unique
   title     String?
+  address   String?
   createdAt DateTime @default(now())
 
   inquiries RetreatInquiry[]
@@ -50,5 +51,5 @@ model RetreatInquiry {
   inquiry Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
   retreat Retreat @relation(fields: [retreatId], references: [id], onDelete: Cascade)
 
-  @@unique([inquiryId, retreatId])
+  @@index([retreatId])
 }
