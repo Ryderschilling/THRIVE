@@ -87,15 +87,28 @@ function FormShell({
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-
+  
     try {
+      let paymentIntentId: string | undefined = undefined;
+
+      if (!withStripe && donationCents > 0) {
+        throw new Error("Donations are temporarily unavailable. Please submit without a donation.");
+      }
+  
+      // If user entered a donation, process payment first
       if (withStripe && donationCents > 0) {
+        if (donationCents < 100) {
+          throw new Error("Donation must be at least $1.00.");
+        }
         if (!stripe || !elements) {
           throw new Error("Payments are not ready. Please refresh and try again.");
         }
-      
-        // 1) Create a PaymentIntent on the server
-        const res = await fetch(`/api/retreats/${retreatSlug}/payment-intent`, {
+  
+        const card = elements.getElement(CardElement);
+        if (!card) throw new Error("Card input is not ready. Please refresh and try again.");
+  
+        // 1) Create PaymentIntent on server
+        const piRes = await fetch(`/api/retreats/${retreatSlug}/payment-intent`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -103,42 +116,53 @@ function FormShell({
             email: form.email,
           }),
         });
-      
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data?.error || "Unable to start payment.");
-        }
-      
-        const clientSecret = data?.clientSecret as string | undefined;
-        if (!clientSecret) {
-          throw new Error("Missing payment client secret.");
-        }
-      
-        // 2) Confirm the card payment using the CardElement
-        const card = elements.getElement(CardElement);
-        if (!card) throw new Error("Card input not found. Please refresh and try again.");
-      
-        const result = await stripe.confirmCardPayment(clientSecret, {
+  
+        const piJson = await piRes.json();
+        if (!piRes.ok) throw new Error(piJson?.error || "Failed to start payment.");
+  
+        // 2) Confirm card payment in browser
+        const confirm = await stripe.confirmCardPayment(piJson.clientSecret, {
           payment_method: {
             card,
             billing_details: {
               name: form.name,
               email: form.email,
               phone: form.phone,
+              address: form.address ? { line1: form.address } : undefined,
             },
           },
         });
-      
-        if (result.error) {
-          throw new Error(result.error.message || "Payment failed.");
+  
+        if (confirm.error) {
+          throw new Error(confirm.error.message || "Payment failed.");
         }
-      
-        if (result.paymentIntent?.status !== "succeeded") {
-          throw new Error(`Payment status: ${result.paymentIntent?.status || "unknown"}`);
+        if (confirm.paymentIntent?.status !== "succeeded") {
+          throw new Error("Payment did not succeed. Please try again.");
         }
+  
+        paymentIntentId = confirm.paymentIntent.id;
       }
-      
-      // Only after payment succeeds (or donation is blank) do we proceed.
+  
+      // 3) Create inquiry + send email (always)
+      const inquiryRes = await fetch(`/api/retreats/${retreatSlug}/inquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          lookingForward: form.whyJoin, // <-- this is the textarea
+          paymentAmountCents: withStripe && donationCents > 0 ? donationCents : undefined,
+          paymentIntentId,
+        }),
+      });
+  
+      const inquiryJson = await inquiryRes.json();
+      if (!inquiryRes.ok) {
+        throw new Error(inquiryJson?.error || "Failed to submit signup.");
+      }
+  
       router.push(`/retreats/${retreatSlug}/apply/received`);
     } catch (err: any) {
       setError(err?.message || "Something went wrong. Please try again.");

@@ -12,8 +12,9 @@ export async function sendRetreatSignupEmail(args: {
   why?: string;
   paymentAmountCents?: number;
   paymentIntentId?: string;
+lookingForward?: string;
 }) {
-  const to = "josh@thriveco.net";
+    const to = process.env.SIGNUP_NOTIFY_EMAIL || "josh@thriveco.net";
   const from = process.env.SIGNUP_FROM_EMAIL || "THRIVE <onboarding@thriveco.net>";
 
   if (!process.env.RESEND_API_KEY) return;
@@ -27,7 +28,7 @@ export async function sendRetreatSignupEmail(args: {
     from,
     to,
     subject: `New THRIVE Retreat Signup — ${args.retreatTitle}`,
-    text: `
+text: `
 RETREAT: ${args.retreatTitle}
 
 NAME: ${args.name}
@@ -41,9 +42,9 @@ PAYMENT INTENT: ${args.paymentIntentId || "—"}
 ABOUT:
 ${args.about || "—"}
 
-WHY:
-${args.why || "—"}
-    `.trim(),
+LOOKING FORWARD TO MOST:
+${args.lookingForward || args.why || "—"}
+`.trim(),
   });
 }
 

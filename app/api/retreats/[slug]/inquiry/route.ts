@@ -20,21 +20,34 @@ export async function POST(
 
     const body = await req.json();
 
+    // Required fields
     const name = String(body?.name || "").trim();
     const email = String(body?.email || "").trim().toLowerCase();
     const phone = String(body?.phone || "").trim();
-    const address = String(body?.address || "").trim();
 
-    // In your updated UI, you added "What are you looking forward to most?"
-    // We'll store it in Inquiry.message (fits your schema).
+    // Optional fields
+    const address = String(body?.address || "").trim();
+    const about = String(body?.about || "").trim();
+    const why = String(body?.why || "").trim();
+
+    // Updated UI field (store as Inquiry.message)
     const lookingForward = String(body?.lookingForward || body?.message || "").trim();
 
-    // payment (optional)
+    // Payment (optional) — only treat donation as valid if a PaymentIntent exists
     const paymentIntentId = body?.paymentIntentId
       ? String(body.paymentIntentId).trim()
       : undefined;
-    const paymentAmountCents =
+
+    const paymentAmountCentsRaw =
       body?.paymentAmountCents != null ? Number(body.paymentAmountCents) : undefined;
+
+    const hasValidDonation =
+      !!paymentIntentId &&
+      typeof paymentAmountCentsRaw === "number" &&
+      Number.isFinite(paymentAmountCentsRaw) &&
+      paymentAmountCentsRaw > 0;
+
+    const donationCents = hasValidDonation ? paymentAmountCentsRaw : null;
 
     if (!name || !email || !phone) {
       return NextResponse.json(
@@ -43,15 +56,14 @@ export async function POST(
       );
     }
 
-    // Contact: requires email to be unique in Prisma for where: { email } to work.
-    // If you've added @unique to Contact.email, this is correct.
+    // Upsert contact (requires Contact.email to be @unique in Prisma)
     const contact = await db.contact.upsert({
       where: { email },
       update: { name, phone, address },
       create: { email, name, phone, address },
     });
 
-    // Retreat row in DB (only fields that exist in your schema)
+    // Ensure retreat exists in DB
     const retreatRow = await db.retreat.upsert({
       where: { slug: retreat.slug },
       update: { title: retreat.title ?? null },
@@ -64,33 +76,33 @@ export async function POST(
         type: "RETREAT_REQUEST",
         message: lookingForward || null,
         source: `retreats/${retreat.slug}/apply`,
-        donationCents:
-          Number.isFinite(paymentAmountCents as any) ? (paymentAmountCents as number) : null,
+        donationCents,
         contactId: contact.id,
-
         retreatLink: {
-          create: {
-            retreatId: retreatRow.id,
-          },
+          create: { retreatId: retreatRow.id },
         },
       },
     });
 
-    // Email (keep payload minimal; don’t pass fields your email function doesn’t expect)
+    // Email notification (send full context Josh needs)
     await sendRetreatSignupEmail({
       retreatTitle: retreat.title,
       name,
       email,
       phone,
-      // Optional helpers if your email template supports them:
+      address: address || undefined,
+      about: about || undefined,
+      why: why || undefined,
       lookingForward: lookingForward || undefined,
-      paymentAmountCents:
-        Number.isFinite(paymentAmountCents as any) ? (paymentAmountCents as number) : undefined,
+      paymentAmountCents: donationCents ?? undefined,
       paymentIntentId,
-    } as any);
+    });
 
     return NextResponse.json({ ok: true, inquiryId: inquiry.id });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Server error." }, { status: 500 });
+    return NextResponse.json(
+      { error: e?.message || "Server error." },
+      { status: 500 }
+    );
   }
 }
