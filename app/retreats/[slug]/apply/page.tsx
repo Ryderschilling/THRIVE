@@ -93,8 +93,52 @@ function FormShell({
         if (!stripe || !elements) {
           throw new Error("Payments are not ready. Please refresh and try again.");
         }
+      
+        // 1) Create a PaymentIntent on the server
+        const res = await fetch(`/api/retreats/${retreatSlug}/payment-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amountCents: donationCents,
+            email: form.email,
+          }),
+        });
+      
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error || "Unable to start payment.");
+        }
+      
+        const clientSecret = data?.clientSecret as string | undefined;
+        if (!clientSecret) {
+          throw new Error("Missing payment client secret.");
+        }
+      
+        // 2) Confirm the card payment using the CardElement
+        const card = elements.getElement(CardElement);
+        if (!card) throw new Error("Card input not found. Please refresh and try again.");
+      
+        const result = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card,
+            billing_details: {
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+            },
+          },
+        });
+      
+        if (result.error) {
+          throw new Error(result.error.message || "Payment failed.");
+        }
+      
+        if (result.paymentIntent?.status !== "succeeded") {
+          throw new Error(`Payment status: ${result.paymentIntent?.status || "unknown"}`);
+        }
       }
-
+      
+      // Only after payment succeeds (or donation is blank) do we proceed.
       router.push(`/retreats/${retreatSlug}/apply/received`);
     } catch (err: any) {
       setError(err?.message || "Something went wrong. Please try again.");
