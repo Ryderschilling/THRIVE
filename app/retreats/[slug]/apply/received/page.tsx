@@ -23,26 +23,12 @@ export default async function ReceivedPage(props: {
     <Section>
       <div className="mx-auto max-w-2xl text-center space-y-6 py-10 md:py-12">
         <div className="text-xs uppercase tracking-[0.32em] text-white/60">
-          Request received
+          Donation Received
         </div>
 
         <h1 className="font-display text-4xl md:text-5xl text-white/95">
-          Thank you.
+          Thank you!!
         </h1>
-
-        <p className="text-white/70 leading-relaxed">
-          We’re looking forward to seeing you at {retreat?.title ?? "the retreat"}.
-          Josh will reach out with next steps and details.
-        </p>
-
-        <div className="pt-2">
-          <Link
-            href={`/retreats/${encodeURIComponent(backSlug)}/gallery`}
-            className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm tracking-wide text-white/90 hover:bg-white/15 transition"
-          >
-            Back to gallery
-          </Link>
-        </div>
       </div>
     </Section>
   );
