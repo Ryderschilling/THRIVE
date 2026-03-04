@@ -37,7 +37,6 @@ model Retreat {
   id        String   @id @default(cuid())
   slug      String   @unique
   title     String?
-  address   String?
   createdAt DateTime @default(now())
 
   inquiries RetreatInquiry[]

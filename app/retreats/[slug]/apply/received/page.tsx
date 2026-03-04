@@ -28,7 +28,7 @@ export default async function ReceivedPage(props: {
 
         <h1 className="font-display text-4xl md:text-5xl text-white/95">
           Thank you!!
-        </h1>
+        </h1> 
       </div>
     </Section>
   );
