@@ -176,15 +176,8 @@ function FormShell({
       <div className="mx-auto max-w-3xl space-y-8">
         <div className="flex items-end justify-between gap-6">
           <div className="space-y-2">
-            <div className="text-xs uppercase tracking-[0.32em] text-white/60">Signup</div>
             <h1 className="font-display text-3xl md:text-5xl text-white/95">{retreat.title}</h1>
           </div>
-          <Link
-            href={`/retreats/${retreat.slug}/gallery`}
-            className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-transparent px-5 py-2.5 text-sm tracking-wide text-white/80 hover:bg-white/5 transition"
-          >
-            Back
-          </Link>
         </div>
 
         <form
