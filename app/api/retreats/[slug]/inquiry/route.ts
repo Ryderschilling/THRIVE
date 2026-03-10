@@ -20,20 +20,15 @@ export async function POST(
 
     const body = await req.json();
 
-    // Required fields
     const name = String(body?.name || "").trim();
     const email = String(body?.email || "").trim().toLowerCase();
     const phone = String(body?.phone || "").trim();
 
-    // Optional fields
     const address = String(body?.address || "").trim();
     const about = String(body?.about || "").trim();
     const why = String(body?.why || "").trim();
-
-    // Updated UI field (store as Inquiry.message)
     const lookingForward = String(body?.lookingForward || body?.message || "").trim();
 
-    // Payment (optional) — only treat donation as valid if a PaymentIntent exists
     const paymentIntentId = body?.paymentIntentId
       ? String(body.paymentIntentId).trim()
       : undefined;
@@ -56,52 +51,62 @@ export async function POST(
       );
     }
 
-    // Upsert contact (requires Contact.email to be @unique in Prisma)
-    const contact = await db.contact.upsert({
-      where: { email },
-      update: { name, phone, address },
-      create: { email, name, phone, address },
-    });
+    let inquiryId: string | null = null;
 
-    // Ensure retreat exists in DB
-    const retreatRow = await db.retreat.upsert({
-      where: { slug: retreat.slug },
-      update: { title: retreat.title ?? null },
-      create: { slug: retreat.slug, title: retreat.title ?? null },
-    });
+    try {
+      const contact = await db.contact.upsert({
+        where: { email },
+        update: { name, phone, address },
+        create: { email, name, phone, address },
+      });
 
-    // Create inquiry + link it to retreat through RetreatInquiry
-    const inquiry = await db.inquiry.create({
-      data: {
-        type: "RETREAT_REQUEST",
-        message: lookingForward || null,
-        source: `retreats/${retreat.slug}/apply`,
-        donationCents,
-        contactId: contact.id,
-        retreatLink: {
-          create: { retreatId: retreatRow.id },
+      const retreatRow = await db.retreat.upsert({
+        where: { slug: retreat.slug },
+        update: { title: retreat.title ?? null },
+        create: { slug: retreat.slug, title: retreat.title ?? null },
+      });
+
+      const inquiry = await db.inquiry.create({
+        data: {
+          type: "RETREAT_REQUEST",
+          message: lookingForward || null,
+          source: `retreats/${retreat.slug}/apply`,
+          donationCents,
+          contactId: contact.id,
+          retreatLink: {
+            create: { retreatId: retreatRow.id },
+          },
         },
-      },
-    });
+      });
 
-    // Email notification (send full context Josh needs)
-    await sendRetreatSignupEmail({
-      retreatTitle: retreat.title,
-      name,
-      email,
-      phone,
-      address: address || undefined,
-      about: about || undefined,
-      why: why || undefined,
-      lookingForward: lookingForward || undefined,
-      paymentAmountCents: donationCents ?? undefined,
-      paymentIntentId,
-    });
+      inquiryId = inquiry.id;
+    } catch (dbError) {
+      console.error("Retreat inquiry DB write failed:", dbError);
+    }
 
-    return NextResponse.json({ ok: true, inquiryId: inquiry.id });
-  } catch (e: any) {
+    try {
+      await sendRetreatSignupEmail({
+        retreatTitle: retreat.title,
+        name,
+        email,
+        phone,
+        address: address || undefined,
+        about: about || undefined,
+        why: why || undefined,
+        lookingForward: lookingForward || undefined,
+        paymentAmountCents: donationCents ?? undefined,
+        paymentIntentId,
+      });
+    } catch (emailError) {
+      console.error("Retreat signup email failed:", emailError);
+    }
+
+    return NextResponse.json({ ok: true, inquiryId });
+  } catch (e) {
+    console.error("Retreat inquiry route error:", e);
+
     return NextResponse.json(
-      { error: e?.message || "Server error." },
+      { error: "Unable to submit signup right now." },
       { status: 500 }
     );
   }

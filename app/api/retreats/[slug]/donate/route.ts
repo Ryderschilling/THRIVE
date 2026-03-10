@@ -11,7 +11,10 @@ export async function POST(
   try {
     const { slug } = await params;
 
-    const retreat = retreats.find((r) => String(r.slug).toLowerCase() === String(slug).toLowerCase());
+    const retreat = retreats.find(
+      (r) => String(r.slug).toLowerCase() === String(slug).toLowerCase()
+    );
+
     if (!retreat) {
       return NextResponse.json({ error: "Retreat not found" }, { status: 404 });
     }
@@ -19,22 +22,32 @@ export async function POST(
     const body = await req.json().catch(() => ({} as any));
     const amountRaw = body?.amount;
 
-    // amount is optional; if missing or invalid, treat as 0 and still return url null
-    const amountNum = typeof amountRaw === "number" ? amountRaw : Number(amountRaw);
-    const amountCents = Number.isFinite(amountNum) && amountNum > 0 ? Math.round(amountNum * 100) : 0;
+    const amountNum =
+      typeof amountRaw === "number" ? amountRaw : Number(amountRaw);
+
+    const amountCents =
+      Number.isFinite(amountNum) && amountNum > 0
+        ? Math.round(amountNum * 100)
+        : 0;
 
     if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: "Missing STRIPE_SECRET_KEY" }, { status: 500 });
+      console.error("Missing STRIPE_SECRET_KEY");
+      return NextResponse.json(
+        { error: "Unable to start donation checkout right now." },
+        { status: 500 }
+      );
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    // If no donation, your client can just skip redirect/confirm and proceed
     if (amountCents <= 0) {
       return NextResponse.json({ url: null });
     }
 
-    const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const origin =
+      req.headers.get("origin") ??
+      process.env.NEXT_PUBLIC_SITE_URL ??
+      "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -58,7 +71,12 @@ export async function POST(
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message ?? error }, { status: 500 });
+  } catch (error) {
+    console.error("Donate route error:", error);
+
+    return NextResponse.json(
+      { error: "Unable to start donation checkout right now." },
+      { status: 500 }
+    );
   }
 }

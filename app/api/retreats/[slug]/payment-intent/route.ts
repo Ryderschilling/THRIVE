@@ -44,7 +44,7 @@ export async function POST(
     });
 
     return NextResponse.json({ clientSecret: intent.client_secret, id: intent.id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Stripe error." }, { status: 500 });
-  }
+} catch (e: any) {
+    return NextResponse.json({ error: e?.message || "Stripe error." }, { status: 500 });
+  }
 }

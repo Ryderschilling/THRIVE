@@ -87,6 +87,8 @@ function FormShell({
     e.preventDefault();
     setSubmitting(true);
     setError(null);
+
+    
   
     try {
       let paymentIntentId: string | undefined = undefined;
@@ -152,20 +154,23 @@ function FormShell({
           email: form.email,
           phone: form.phone,
           address: form.address,
-          lookingForward: form.whyJoin, // <-- this is the textarea
+          lookingForward: form.whyJoin,
           paymentAmountCents: withStripe && donationCents > 0 ? donationCents : undefined,
           paymentIntentId,
         }),
       });
-  
-      const inquiryJson = await inquiryRes.json();
+      
+      const inquiryJson = await inquiryRes.json().catch(() => null);
+      
+      // If payment already succeeded, never block the customer here.
       if (!inquiryRes.ok) {
-        throw new Error(inquiryJson?.error || "Failed to submit signup.");
+        console.error("Inquiry submit failed after payment:", inquiryJson);
       }
-  
+      
       router.push(`/retreats/${retreatSlug}/apply/received`);
     } catch (err: any) {
-      setError(err?.message || "Something went wrong. Please try again.");
+      console.error("Retreat apply submit error:", err);
+      setError(err?.message || "Payment did not go through. Please try again.");
     } finally {
       setSubmitting(false);
     }
