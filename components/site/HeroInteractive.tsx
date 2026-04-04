@@ -19,10 +19,10 @@ export default function HeroInteractive() {
     if (!el) return;
 
     const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width; // 0..1
-    const y = (e.clientY - r.top) / r.height; // 0..1
-    const px = (x - 0.5) * 2; // -1..1
-    const py = (y - 0.5) * 2; // -1..1
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    const px = (x - 0.5) * 2;
+    const py = (y - 0.5) * 2;
 
     if (raf.current) cancelAnimationFrame(raf.current);
     raf.current = requestAnimationFrame(() => setVars(px, py));
@@ -42,62 +42,57 @@ export default function HeroInteractive() {
       onPointerLeave={onLeave}
       className="thrive-heroScene relative overflow-hidden"
     >
-      {/* Background blur layer (adds depth) */}
-      <div className="thrive-heroLayer thrive-heroBg">
-        <Image
-          src="/images/hero-palm.JPG"
-          alt=""
-          fill
-          priority
-          className="object-cover object-left-top"
-        />
-      </div>
-
-      {/* Main photo layer */}
+      {/* Background */}
       <div className="thrive-heroLayer thrive-heroMid">
         <Image
-          src="/images/hero-palm.JPG"
-          alt="Palm canopy"
+          src="/images/home-hero-sunset.png"
+          alt="THRIVE coastal sunset"
           fill
           priority
-          className="object-cover object-left-top thrive-bg-anim"
+          className="object-cover object-center thrive-bg-anim"
         />
       </div>
 
-      {/* Readability overlays */}
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="absolute inset-0 [background:radial-gradient(80%_60%_at_50%_30%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_70%,rgba(0,0,0,0.78)_100%)]" />
+      {/* Blur + darken like reference */}
+      <div className="absolute inset-0 backdrop-blur-[5px]" />
+<div className="absolute inset-0 bg-black/25" />
+<div className="absolute inset-0 [background:radial-gradient(90%_80%_at_50%_35%,rgba(0,0,0,0)_0%,rgba(0,0,0,0.45)_58%,rgba(0,0,0,0.82)_100%)]" />
 
-      {/* Text */}
-      <div className="thrive-heroText absolute inset-0 flex items-center justify-center px-6">
-        <div className="mx-auto max-w-xl text-center space-y-6">
-          <div className="text-xs uppercase tracking-[0.32em] text-white/75">
-            THRIVE · 30A
+      {/* Hero content (NO bordered panel) */}
+      <div className="absolute inset-0 flex items-center justify-center px-6">
+        <div className="w-full max-w-4xl text-center">
+          <div className="mb-6 text-[11px] uppercase tracking-[0.32em] text-white/55">
+            Home
           </div>
 
-          <h1 className="thrive-heroTitle font-display text-5xl md:text-7xl leading-[1.05] text-white">
-            Brotherhood. Formation. Leadership.
-          </h1>
+          {/* THRIVE + 30a overlay */}
+          <div className="relative inline-block">
+          <div className="thrive-wordmark text-[92px] leading-none text-white md:text-[152px]">
+              THRIVE
+            </div>
 
-          <p className="text-base md:text-lg text-white/75">
-            A ministry and growth ecosystem for Christian businessmen pursuing
-            depth, responsibility, and kingdom impact.
-          </p>
+            <div className="thrive-wordmarkScript absolute left-1/2 top-[72%] -translate-x-1/2 -translate-y-1/2 text-[44px] md:text-[60px]">
+              30a
+            </div>
+          </div>
+
+          {/* subtitle spacing matches reference */}
+          <div className="mx-auto mt-6 max-w-2xl text-[14px] leading-relaxed text-white/60 md:text-[16px]">
+            Ministry | Discipleship | Encouragement
+            <br />
+            for the Entrepreneur &amp; Businessman
+          </div>
+
+          <div className="mt-8">
+            <a href="/community" className="thrive-heroBtn">
+              Get Involved
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Foreground leaves cutout (THIS is what makes the text feel “inside” the palms) */}
-      <div className="thrive-heroLayer thrive-heroFg pointer-events-none">
-        <Image
-          src="/images/hero-palm-foreground.webp"
-          alt=""
-          fill
-          className="object-cover object-left-top"
-        />
-      </div>
-
-      {/* Bottom fade into black page */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-black" />
+      {/* Bottom fade */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-b from-transparent to-black" />
     </section>
   );
 }

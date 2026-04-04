@@ -5,6 +5,7 @@ import { retreats } from "@/content/retreats";
 import { coachingProducts } from "@/content/coaching";
 import RetreatWideCard from "@/components/retreats/RetreatWideCard";
 import PlanCard from "@/components/coaching/PlanCard";
+import PageCardsRail from "@/components/site/PageCardsRail";
 
 export default function HomePage() {
   const featuredRetreat = retreats[0];
@@ -13,6 +14,8 @@ export default function HomePage() {
   return (
     <>
       <HeroInteractive />
+
+      <PageCardsRail />
 
       <Section>
         <div className="mx-auto max-w-4xl text-center space-y-6">

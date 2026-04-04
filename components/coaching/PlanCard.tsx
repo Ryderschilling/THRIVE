@@ -9,15 +9,15 @@ export default function PlanCard(props: {
   ctaLabel: string;
   featured?: boolean;
 }) {
+  const wrapper =
+    "relative overflow-hidden p-6 " +
+    (props.featured ? "thrive-glassStrong" : "thrive-glass");
+
+  const button = props.featured ? "thrive-btn w-full" : "thrive-btn thrive-btnGhost w-full";
+
   return (
-    <div
-      className={
-        "relative overflow-hidden rounded-2xl border bg-white/[0.03] p-6 " +
-        (props.featured
-          ? "border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.55)]"
-          : "border-white/10")
-      }
-    >
+    <div className={wrapper}>
+      {/* soft highlight blob like the collage */}
       <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[28rem] -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
 
       {props.featured ? (
@@ -46,15 +46,7 @@ export default function PlanCard(props: {
         ) : null}
 
         <div className="pt-2">
-          <Link
-            href={props.href}
-            className={
-              "inline-flex w-full items-center justify-center rounded-xl border px-5 py-3 text-sm tracking-wide transition " +
-              (props.featured
-                ? "border-white/20 bg-white/15 text-white hover:bg-white/20"
-                : "border-white/15 bg-white/10 text-white/90 hover:bg-white/15")
-            }
-          >
+          <Link href={props.href} className={button}>
             {props.ctaLabel}
           </Link>
         </div>

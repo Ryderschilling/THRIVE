@@ -9,13 +9,13 @@ export default function Section({
 }) {
   return (
     <section
-      className={
-        tone === "soft"
-          ? "py-16 md:py-24"
-          : "py-20 md:py-28"
-      }
+      className={tone === "soft" ? "py-16 md:py-24" : "py-20 md:py-28"}
     >
-      <Container>{children}</Container>
+      <Container>
+        <div className={tone === "soft" ? "thrive-frame p-6 md:p-8" : ""}>
+          {children}
+        </div>
+      </Container>
     </section>
   );
 }

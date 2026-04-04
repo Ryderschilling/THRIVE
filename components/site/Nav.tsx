@@ -4,9 +4,10 @@ import { site } from "@/content/site";
 
 export default function Nav() {
   const launchMode = process.env.NEXT_PUBLIC_LAUNCH_MODE === "retreat";
-if (launchMode) return null;
+  if (launchMode) return null;
+
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur">
+<header className="fixed top-0 z-50 w-full border-b border-white/5 bg-black/30 backdrop-blur-sm">
       <Container>
         <div className="flex h-12 items-center justify-between">
           {/* Brand */}
@@ -33,7 +34,7 @@ if (launchMode) return null;
           {/* CTA */}
           <Link
             href={site.primaryCta.href}
-            className="text-xs tracking-wide text-white/70 hover:text-white transition"
+            className="thrive-btnGhost"
           >
             {site.primaryCta.label}
           </Link>
