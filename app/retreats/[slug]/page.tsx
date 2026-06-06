@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Section from "@/components/site/Section";
 import { getRetreatBySlug } from "@/content/retreats";
@@ -83,10 +84,12 @@ export default function RetreatDetailPage(props: { params: { slug: string } }) {
 
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
               <div className="relative aspect-[4/3] overflow-hidden">
-                <img
+                <Image
                   src={retreat.coverImage}
                   alt={retreat.title}
-                  className="h-full w-full object-cover object-center"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
               </div>

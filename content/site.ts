@@ -6,6 +6,7 @@ export const site = {
     { label: "Home", href: "/" },
     { label: "THRIVE", href: "/thrive" },
     { label: "Community", href: "/community" },
+    { label: "Events", href: "/events" },
     { label: "Retreats", href: "/retreats" },
     { label: "Coaching", href: "/coaching" },
     // About is covered by THRIVE for now

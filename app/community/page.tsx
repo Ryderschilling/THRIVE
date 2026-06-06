@@ -82,9 +82,12 @@ export default function CommunityPage() {
 
             <div className="mt-5 space-y-4">
               {[
-                { title: "Monthly Brotherhood Dinner", meta: "30A · TBD" },
-                { title: "Morning Formation", meta: "Inlet Beach · TBD" },
-                { title: "Business & Faith Roundtable", meta: "Santa Rosa · TBD" },
+                { title: "Monthly Brotherhood Dinner", meta: "30A · Monthly" },
+                { title: "Morning Formation", meta: "Inlet Beach · Weekly" },
+                {
+                  title: "Business & Faith Roundtable",
+                  meta: "Santa Rosa · Quarterly",
+                },
               ].map((e) => (
                 <div
                   key={e.title}
@@ -95,6 +98,13 @@ export default function CommunityPage() {
                 </div>
               ))}
             </div>
+
+            <Link
+              href="/email"
+              className="mt-4 block text-right text-xs text-white/60 transition hover:text-white"
+            >
+              View all events →
+            </Link>
 
             <Link href="/email" className="thrive-btn w-full mt-6">
               Join for event invites

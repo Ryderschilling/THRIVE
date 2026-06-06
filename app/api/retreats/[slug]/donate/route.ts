@@ -4,6 +4,10 @@ import { retreats } from "@/content/retreats";
 
 export const runtime = "nodejs";
 
+type DonateRequestBody = {
+  amount?: number | string;
+};
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -19,7 +23,7 @@ export async function POST(
       return NextResponse.json({ error: "Retreat not found" }, { status: 404 });
     }
 
-    const body = await req.json().catch(() => ({} as any));
+    const body = await req.json().catch((): DonateRequestBody => ({}));
     const amountRaw = body?.amount;
 
     const amountNum =

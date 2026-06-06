@@ -1,9 +1,5 @@
 import "./globals.css";
 
-import Nav from "@/components/site/Nav";
-import Footer from "@/components/site/Footer";
-import VerseBar from "@/components/VerseBar";
-
 import {
   Cormorant_Garamond,
   Source_Sans_3,
@@ -14,8 +10,7 @@ import {
 } from "next/font/google";
 import type { ReactNode } from "react";
 
-// Existing fonts
-const cormorant = Cormorant_Garamond({
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-cormorant",
@@ -27,10 +22,9 @@ const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
 });
 
-// Collage system fonts
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
 });
 
@@ -40,7 +34,6 @@ const dmSerif = DM_Serif_Display({
   variable: "--font-display",
 });
 
-// HERO fonts (reference match)
 const wordmark = Oswald({
   subsets: ["latin"],
   weight: ["300"],
@@ -54,21 +47,32 @@ const allura = Allura({
 });
 
 export const metadata = {
-  title: "THRIVE",
-  description: "Faith-driven growth for business and life",
+  title: "THRIVE 30a — Ministry, Discipleship, Encouragement",
+  description:
+    "A ministry and growth ecosystem for Christian businessmen on the 30A coast of Florida.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Redesign display fonts referenced by name in app/redesign.css */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Pinyon+Script&family=JetBrains+Mono:wght@400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         suppressHydrationWarning
-        className={`${cormorant.variable} ${sourceSans.variable} ${inter.variable} ${dmSerif.variable} ${wordmark.variable} ${allura.variable} bg-black text-white`}
+        className={`${cormorantGaramond.variable} ${sourceSans.variable} ${inter.variable} ${dmSerif.variable} ${wordmark.variable} ${allura.variable} bg-black text-white`}
       >
-        <Nav />
-        <main>{children}</main>
-        <VerseBar />
-        <Footer />
+        {children}
       </body>
     </html>
   );

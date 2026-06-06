@@ -44,7 +44,10 @@ export default function CoachingPage() {
               <li>✓ 30A network</li>
             </ul>
             <div className="mt-6">
-              <Link href="/email" className="thrive-heroBtn w-full">
+              <Link
+                href="/coaching/group-coaching"
+                className="thrive-heroBtn w-full"
+              >
                 Sign up
               </Link>
             </div>
@@ -61,7 +64,10 @@ export default function CoachingPage() {
               <li>✓ Clear outcomes</li>
             </ul>
             <div className="mt-6">
-              <Link href="/email" className="thrive-heroBtn w-full">
+              <Link
+                href="/coaching/personal-coaching-program"
+                className="thrive-heroBtn w-full"
+              >
                 Sign up
               </Link>
             </div>
@@ -78,7 +84,10 @@ export default function CoachingPage() {
               <li>✓ High-touch support</li>
             </ul>
             <div className="mt-6">
-              <Link href="/email" className="thrive-heroBtn w-full">
+              <Link
+                href="/coaching/personal-coaching-calls"
+                className="thrive-heroBtn w-full"
+              >
                 Sign up
               </Link>
             </div>

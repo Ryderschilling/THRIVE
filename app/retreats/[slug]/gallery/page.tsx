@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
@@ -11,8 +12,8 @@ function normalizeSlug(v: unknown) {
 }
 
 export default function RetreatGalleryPage() {
-  const params = useParams();
-  const slug = normalizeSlug((params as any)?.slug);
+  const params = useParams<{ slug: string }>();
+  const slug = normalizeSlug(params.slug);
 
   const retreat = useMemo(() => {
     return getRetreatBySlug(slug);
@@ -80,10 +81,12 @@ export default function RetreatGalleryPage() {
                   style={{ transformStyle: "preserve-3d" }}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
+                    <Image
                       src={src}
                       alt={`Retreat gallery image ${idx + 1}`}
-                      className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.04]"
+                      fill
+                      sizes="(max-width: 640px) 78vw, (max-width: 768px) 54vw, 38vw"
+                      className="object-cover object-center transition duration-700 group-hover:scale-[1.04]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/65" />
                   </div>

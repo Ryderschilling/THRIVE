@@ -31,15 +31,15 @@ export type PastRetreat = {
 export const retreats: Retreat[] = [
   {
     slug: "emerald-house",
-    title: "THRIVE Retreat",
+    title: "Leadership Retreat",
     status: "Invite-only",
     locationLabel: "Santa Rosa Beach, FL (30A)",
     address: "221 Hillcrest Rd., Santa Rosa Beach, FL, 32459",
     spotsTotal: 30,
-    spotsRemaining: 30,
+    spotsRemaining: 18,
 
-    dateStart: "2026-03-06",
-    dateEnd: "2026-03-08",
+    dateStart: "2026-04-12",
+    dateEnd: "2026-04-15",
     nightsLabel: "3 nights",
 
     coverImage: "/images/retreats/emerald-house/cover.jpg",
@@ -102,6 +102,63 @@ export const retreats: Retreat[] = [
 
     invitationLine:
       "This is by invitation. Request to join and we’ll reach out personally with next steps and details.",
+  },
+  {
+    slug: "rising-strong",
+    title: "Rising Strong Retreat",
+    status: "Open",
+    locationLabel: "Santa Rosa Beach, FL (30A)",
+    address: "30A, Santa Rosa Beach, FL 32459",
+    spotsTotal: 20,
+    spotsRemaining: 14,
+
+    dateStart: "2026-06-05",
+    dateEnd: "2026-06-08",
+    nightsLabel: "3 nights",
+
+    coverImage: "/images/retreats/emerald-house/cover.jpg",
+    galleryImages: ["/images/retreats/emerald-house/cover.jpg"],
+
+    summary:
+      "A faith-fueled men's retreat for those ready to rise from stagnation — addressing the places where life, leadership, and calling feel stuck.",
+    whatToExpect: [
+      "Deep-dive sessions on identity and calling",
+      "Honest brotherhood conversations",
+      "Coastal setting built for focus and renewal",
+      "Actionable takeaways for business and personal clarity",
+      "Prayer, worship, and Scripture-led formation",
+    ],
+    schedule: [
+      {
+        dayLabel: "Day 1 — Arrival",
+        items: ["Arrival + settle in", "Opening dinner", "Orientation"],
+      },
+      {
+        dayLabel: "Day 2 — Identity + Rising",
+        items: [
+          "Morning formation",
+          "Identity session",
+          "Solo reflection block",
+          "Brotherhood table",
+        ],
+      },
+      {
+        dayLabel: "Day 3 — Calling + Business",
+        items: [
+          "Morning formation",
+          "Calling and clarity workshop",
+          "Business breakthrough session",
+          "Evening prayer + table",
+        ],
+      },
+      {
+        dayLabel: "Day 4 — Departures",
+        items: ["Final prayer + send-off", "Departures"],
+      },
+    ],
+
+    invitationLine:
+      "Open to men pursuing breakthrough. Apply below and we'll be in touch with details.",
   },
 ];
 

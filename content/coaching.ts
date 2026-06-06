@@ -13,7 +13,7 @@ export type CoachingProduct = {
     export const coachingProducts: CoachingProduct[] = [
       {
         slug: "personal-coaching-program",
-        title: "Personal Coaching Program",
+        title: "Thrive Personal",
         subtitle: "A private container for breakthrough.",
         description:
           "High-touch coaching for men who want clarity, alignment, discipline, and forward motion—spiritually, personally, and practically.",
@@ -22,13 +22,13 @@ export type CoachingProduct = {
           "Personal roadmap + accountability",
           "Faith-first alignment for leadership and life",
         ],
-        ctaLabel: "Request to join",
+        ctaLabel: "Sign up",
         heroImage: "/images/coaching/personal.jpg",
         kind: "COACHING",
       },
       {
         slug: "group-coaching",
-        title: "Group Coaching",
+        title: "Thrive Groups",
         subtitle: "Brotherhood with structure and direction.",
         description:
           "A guided group environment to sharpen your thinking, strengthen habits, and grow alongside other men pursuing depth and responsibility.",
@@ -37,22 +37,22 @@ export type CoachingProduct = {
           "Community accountability",
           "Q&A, hot seats, and implementation focus",
         ],
-        ctaLabel: "Request to join",
+        ctaLabel: "Sign up",
         heroImage: "/images/coaching/group.jpg",
         kind: "COACHING",
       },
       {
         slug: "personal-coaching-calls",
-        title: "Personal Coaching Calls",
-        subtitle: "Tactical clarity when you need it.",
+        title: "Thrive Executive",
+        subtitle: "High-touch leadership and business support.",
         description:
           "One-off calls for decision points, focus resets, accountability, or next-step strategy—grounded in purpose and direction.",
         bullets: [
-          "Single session format",
-          "Clear outcomes + action steps",
-          "Follow-up notes (simple + actionable)",
+          "Executive-level structure",
+          "Business alignment + leadership systems",
+          "High-touch, high-accountability support",
         ],
-        ctaLabel: "Request a call",
+        ctaLabel: "Sign up",
         heroImage: "/images/coaching/calls.jpg",
         kind: "COACHING",
       },

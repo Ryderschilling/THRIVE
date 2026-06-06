@@ -6,6 +6,12 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createCoachingRequest } from "@/src/actions/inquiries";
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message
+    : "Something went wrong. Please try again.";
+}
+
 export default function CoachingApplyPage() {
   const router = useRouter();
   const params = useParams<{ slug: string }>();
@@ -72,9 +78,9 @@ if (!product) {
       });
 
       setState("success");
-    } catch (err: any) {
+    } catch (error: unknown) {
       setState("error");
-      setError(err?.message || "Something went wrong. Please try again.");
+      setError(getErrorMessage(error));
     }
   }
 

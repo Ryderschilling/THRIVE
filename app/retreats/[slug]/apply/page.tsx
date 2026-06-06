@@ -13,6 +13,12 @@ function normalizeSlug(v: unknown) {
   return decodeURIComponent(String(v)).trim().toLowerCase();
 }
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message
+    : "Payment did not go through. Please try again.";
+}
+
 const stripePromise =
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -168,9 +174,9 @@ function FormShell({
       }
       
       router.push(`/retreats/${retreatSlug}/apply/received`);
-    } catch (err: any) {
-      console.error("Retreat apply submit error:", err);
-      setError(err?.message || "Payment did not go through. Please try again.");
+    } catch (error: unknown) {
+      console.error("Retreat apply submit error:", error);
+      setError(getErrorMessage(error));
     } finally {
       setSubmitting(false);
     }
@@ -316,8 +322,8 @@ function InnerFormNoStripe({ slug }: { slug: string }) {
 }
 
 export default function RetreatApplyPage() {
-  const params = useParams();
-  const slug = normalizeSlug((params as any)?.slug);
+  const params = useParams<{ slug: string }>();
+  const slug = normalizeSlug(params.slug);
 
   if (!stripePromise) {
     return <InnerFormNoStripe slug={slug} />;
