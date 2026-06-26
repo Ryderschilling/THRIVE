@@ -11,7 +11,16 @@ type EventItem = {
   endAt: string | null;
 };
 
+type MemberItem = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  createdAt: string;
+};
+
 const TOKEN_KEY = "thrive_admin_token";
+type Tab = "events" | "members";
 
 function toLocalInputValue(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -22,11 +31,15 @@ export default function AdminEventsClient() {
   const [token, setToken] = useState<string>("");
   const [tokenInput, setTokenInput] = useState<string>("");
   const [authed, setAuthed] = useState(false);
+  const [tab, setTab] = useState<Tab>("events");
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  const [members, setMembers] = useState<MemberItem[]>([]);
+  const [membersLoading, setMembersLoading] = useState(false);
 
   const now = new Date();
   const [form, setForm] = useState({
@@ -71,8 +84,45 @@ export default function AdminEventsClient() {
     }
   }
 
+  async function fetchMembers(withToken: string) {
+    setMembersLoading(true);
+    try {
+      const res = await fetch("/api/admin/event-members", {
+        headers: { "x-admin-token": withToken },
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setMembers(data.members ?? []);
+    } catch {
+      // silent — members list is secondary
+    } finally {
+      setMembersLoading(false);
+    }
+  }
+
+  async function deleteMember(id: string) {
+    if (!confirm("Remove this member?")) return;
+    try {
+      await fetch("/api/admin/event-members", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": token,
+        },
+        body: JSON.stringify({ id }),
+      });
+      setMembers((m) => m.filter((x) => x.id !== id));
+    } catch {
+      // silent
+    }
+  }
+
   useEffect(() => {
-    if (token) fetchEvents(token);
+    if (token) {
+      fetchEvents(token);
+      fetchMembers(token);
+    }
   }, [token]);
 
   function saveToken() {
@@ -189,6 +239,34 @@ export default function AdminEventsClient() {
         </button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+        {(["events", "members"] as Tab[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={[
+              "flex-1 rounded-lg py-2 text-sm capitalize transition",
+              tab === t
+                ? "bg-white/10 text-white/90"
+                : "text-white/50 hover:text-white/75",
+            ].join(" ")}
+          >
+            {t === "members" ? `Members (${members.length})` : "Events"}
+          </button>
+        ))}
+      </div>
+
+      {tab === "members" ? (
+        <MembersPanel
+          members={members}
+          loading={membersLoading}
+          onDelete={deleteMember}
+        />
+      ) : null}
+
+      {tab !== "events" ? null : (
+      <>
       {/* Add form */}
       <form
         onSubmit={createEvent}
@@ -337,6 +415,64 @@ export default function AdminEventsClient() {
         }
         .thrive-input:focus { border-color: rgba(255,255,255,0.30); }
       `}</style>
+      </>
+      )}
+    </div>
+  );
+}
+
+function MembersPanel({
+  members,
+  loading,
+  onDelete,
+}: {
+  members: MemberItem[];
+  loading: boolean;
+  onDelete: (id: string) => void;
+}) {
+  if (loading) return <div className="text-white/55">Loading members…</div>;
+
+  if (members.length === 0) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6 text-white/60">
+        No members yet — they&apos;ll appear here after signing up on the Events page.
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+      <table className="w-full text-left text-sm">
+        <thead className="text-xs uppercase tracking-[0.22em] text-white/50">
+          <tr className="border-b border-white/10">
+            <th className="px-5 py-4">Name</th>
+            <th className="px-5 py-4">Email</th>
+            <th className="px-5 py-4">Phone</th>
+            <th className="px-5 py-4">Joined</th>
+            <th className="px-5 py-4" />
+          </tr>
+        </thead>
+        <tbody className="text-white/80">
+          {members.map((m) => (
+            <tr key={m.id} className="border-b border-white/10 align-middle">
+              <td className="px-5 py-4">{m.name}</td>
+              <td className="px-5 py-4 text-white/70">{m.email}</td>
+              <td className="px-5 py-4 text-white/70">{m.phone ?? "—"}</td>
+              <td className="px-5 py-4 text-white/55 text-xs whitespace-nowrap">
+                {new Date(m.createdAt).toLocaleDateString()}
+              </td>
+              <td className="px-5 py-4 text-right">
+                <button
+                  onClick={() => onDelete(m.id)}
+                  className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/75 hover:bg-white/5"
+                >
+                  Remove
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

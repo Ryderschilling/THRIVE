@@ -65,3 +65,13 @@ model Event {
 
   @@index([startAt])
 }
+
+model EventMember {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

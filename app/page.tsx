@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import "./redesign.css";
 
 /* ── Count-up hook ─────────────────────────────────────────────────────────── */
 function useCountUp(target: number, triggered: boolean, duration = 1600) {
@@ -183,9 +182,9 @@ export default function HomePage() {
           <a href="#" className="th-nav-brand">THRIVE<span>·30A</span></a>
           <nav className="th-nav-links">
             <a href="#community">Community</a>
-            <a href="#retreats">Retreats</a>
             <a href="#coaching">Coaching</a>
             <a href="#josh">Josh</a>
+            <a href="/events">Events</a>
           </nav>
           <a href="#connect" className="th-nav-cta">Get Involved</a>
         </div>
@@ -215,7 +214,6 @@ export default function HomePage() {
           <p className="th-hero-tag">Ministry · Discipleship · Encouragement</p>
           <div className="th-hero-cta">
             <a href="#connect" className="th-btn th-btn-primary">Get Involved →</a>
-            <a href="#retreats" className="th-btn th-btn-outline-cream">Upcoming Retreats</a>
           </div>
         </div>
 
@@ -316,72 +314,7 @@ export default function HomePage() {
 
               <div className="th-community-cta">
                 <a href="#connect" className="th-btn th-btn-primary">Stay Connected →</a>
-                <a href="#retreats" className="th-btn">View Retreats</a>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ RETREATS — horizontal scroll strip ═══════════════════════════════ */}
-      <section id="retreats">
-        {/* sticky horizontal photo strip */}
-        <div className="th-strip-outer" ref={stripOuter}>
-          <div className="th-retreats-sticky">
-            <div className="th-retreats-head">
-              <div>
-                <div className="th-eyebrow"><span className="th-dot" />Retreats — 2026</div>
-                <h2 className="th-h2">Experience THRIVE <em>in person.</em></h2>
-              </div>
-              <div className="th-retreats-head-right">
-                Quiet, focused gatherings designed to slow you down and sharpen you.
-                Coastal, intentional, by application.
-              </div>
-            </div>
-            <div className="th-strip-viewport">
-              <div className="th-strip" ref={stripRef}>
-                {STRIP.map(img => (
-                  <div key={img.src} className="th-strip-card">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.src} alt={img.label} />
-                    <div className="th-strip-overlay" />
-                    <div className="th-strip-label">{img.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* retreat cards — normal flow after the strip */}
-        <div className="th-retreat-cards">
-          <div className="th-wrap">
-            <div className="th-retreat-cards-inner">
-              {RETREATS.map(r => (
-                <div key={r.title} className="th-retreat-card reveal">
-                  <div className="th-retreat-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={r.img} alt={r.title} />
-                    <div className={`th-retreat-badge${r.gold ? " green" : ""}`}>{r.badge}</div>
-                  </div>
-                  <div className="th-retreat-body">
-                    <div className="th-retreat-meta">
-                      {r.dates} · {r.nights} · <span className="green">{r.place}</span>
-                    </div>
-                    <h3 className="th-h3">{r.title}{r.sub && <em> — {r.sub}</em>}</h3>
-                    <p className="th-body">{r.desc}</p>
-                    <div className="th-spots">
-                      <span>{r.spots}</span>
-                      <div className="th-spots-bar">
-                        <div className="th-spots-fill" style={{ width: `${r.pct}%` }} />
-                      </div>
-                    </div>
-                    <a href="#" className={`th-btn${r.ctaGold ? " th-btn-primary" : ""}`}>
-                      {r.cta} →
-                    </a>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -532,7 +465,6 @@ export default function HomePage() {
               <h4>Navigate</h4>
               <a href="#about">About</a>
               <a href="#community">Community</a>
-              <a href="#retreats">Retreats</a>
               <a href="#coaching">Coaching</a>
             </div>
             <div className="th-footer-col">

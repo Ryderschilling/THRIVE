@@ -1,18 +1,18 @@
 import "./globals.css";
+import "./redesign.css";
 
 import {
-  Cormorant_Garamond,
+  Playfair_Display,
   Source_Sans_3,
   Inter,
-  DM_Serif_Display,
   Oswald,
-  Allura,
 } from "next/font/google";
 import type { ReactNode } from "react";
 
-const cormorantGaramond = Cormorant_Garamond({
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700", "800"],
+  style: ["normal", "italic"],
   variable: "--font-cormorant",
 });
 
@@ -28,22 +28,10 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-const dmSerif = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-display",
-});
-
 const wordmark = Oswald({
   subsets: ["latin"],
-  weight: ["300"],
+  weight: ["400", "500"],
   variable: "--font-wordmark",
-});
-
-const allura = Allura({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-script",
 });
 
 export const metadata = {
@@ -64,13 +52,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Pinyon+Script&family=JetBrains+Mono:wght@400&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap"
           rel="stylesheet"
         />
       </head>
       <body
         suppressHydrationWarning
-        className={`${cormorantGaramond.variable} ${sourceSans.variable} ${inter.variable} ${dmSerif.variable} ${wordmark.variable} ${allura.variable} bg-black text-white`}
+        className={`${playfairDisplay.variable} ${sourceSans.variable} ${inter.variable} ${wordmark.variable} bg-black text-white`}
       >
         {children}
       </body>
