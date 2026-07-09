@@ -183,6 +183,10 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   object-position: center 30%;
 }
 
+.hero-video {
+  opacity: 1;
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
