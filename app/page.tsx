@@ -162,7 +162,7 @@ export default function HomePage() {
             loop
             playsInline
           >
-            <source src="/images/hero-drone-clipped.mp4" type="video/mp4" />
+            <source src="/images/hero-drone-web.mp4" type="video/mp4" />
           </video>
         </div>
         <div className="hero-overlay" />
