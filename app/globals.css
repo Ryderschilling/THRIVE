@@ -467,48 +467,43 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
    ══════════════════════════════════════════════════════════════════════════ */
 .community {
   padding: var(--section-py) 0;
-  background: var(--c-cream);
-}
-
-.community-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6rem;
-  align-items: center;
-}
-
-.community-photos {
+  background: var(--c-black);
   position: relative;
-  padding-bottom: 3rem;
-}
-
-.community-photo-main {
-  aspect-ratio: 4/5;
   overflow: hidden;
-  border-radius: 3px;
 }
-.community-photo-main img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s ease;
-}
-.community-photo-main:hover img { transform: scale(1.03); }
 
-.community-photo-float {
+.community-bg {
   position: absolute;
-  bottom: 0;
-  right: -2rem;
-  width: 42%;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 3px;
-  border: 4px solid var(--c-white);
-  box-shadow: 0 20px 48px rgba(0,0,0,0.15);
+  inset: 0;
 }
-.community-photo-float img {
+.community-bg img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center;
+  opacity: 0.55;
 }
+.community-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+.community-content {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.community-events-dark .event {
+  border-color: rgba(255,255,255,0.15);
+  text-align: left;
+}
+.community-events-dark .event-name { color: var(--c-white); }
+.community-events-dark .event-meta { color: rgba(255,255,255,0.5); }
+.community-events-dark .event-d { color: var(--c-white); }
+.community-events-dark .event-m { color: var(--c-gold); }
+.community-events-dark .event-arrow { color: rgba(255,255,255,0.4); }
 
 .community-headline {
   font-family: var(--font-display), system-ui, sans-serif;
@@ -1114,7 +1109,6 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
    ══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .mission-inner,
-  .community-grid,
   .josh-grid {
     grid-template-columns: 1fr;
     gap: 3rem;
@@ -1127,7 +1121,6 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   .retreats-intro { text-align: left; }
   .plans { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .community-photo-float { right: 0; }
 }
 
 @media (max-width: 768px) {

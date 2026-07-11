@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./redesign.css";
 
 import { Barlow, Inter } from "next/font/google";
 import type { ReactNode } from "react";

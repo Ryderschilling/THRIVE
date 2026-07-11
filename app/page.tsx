@@ -19,6 +19,15 @@ function useCountUp(target: number, triggered: boolean, duration = 1600) {
   return count;
 }
 
+/* ── Types ──────────────────────────────────────────────────────────────────── */
+type EventItem = {
+  id: string;
+  title: string;
+  location: string | null;
+  startAt: string;
+  endAt: string | null;
+};
+
 /* ── Data ───────────────────────────────────────────────────────────────────── */
 const TICKER_ITEMS = [
   { text: "Iron Sharpens Iron", ref: "Prov 27:17" },
@@ -75,6 +84,22 @@ export default function HomePage() {
   const [scrolled,     setScrolled]     = useState(false);
   const [submitted,    setSubmitted]    = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [upcomingEvents, setUpcomingEvents] = useState<EventItem[]>([]);
+
+  /* Fetch upcoming events */
+  useEffect(() => {
+    fetch("/api/events")
+      .then(r => r.json())
+      .then(data => {
+        const now = new Date();
+        const sorted = (data.events ?? [] as EventItem[])
+          .filter((e: EventItem) => new Date(e.endAt ?? e.startAt) >= now)
+          .sort((a: EventItem, b: EventItem) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime())
+          .slice(0, 3);
+        setUpcomingEvents(sorted);
+      })
+      .catch(() => {/* fail silently, fallback renders */});
+  }, []);
 
   const rootRef  = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
@@ -141,12 +166,13 @@ export default function HomePage() {
       {/* ══ NAV ══════════════════════════════════════════════════════════════ */}
       <header className={`nav${scrolled ? " scrolled" : ""}`}>
         <div className="nav-pill">
-          <a href="#" className="nav-brand">THRIVE<span>·30A</span></a>
+          <a href="/" className="nav-brand">THRIVE<span>·30A</span></a>
           <nav className="nav-links">
             <a href="#mission">About</a>
             <a href="#community">Community</a>
             <a href="#coaching">Coaching</a>
             <a href="#retreats">Retreats</a>
+            <a href="/events">Events</a>
           </nav>
           <a href="#connect" className="nav-cta">Get Involved</a>
         </div>
@@ -254,57 +280,69 @@ export default function HomePage() {
 
       {/* ══ COMMUNITY ════════════════════════════════════════════════════════ */}
       <section className="community" id="community">
+        {/* Background */}
+        <div className="community-bg" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/palm-leaves-bg.png" alt="" />
+          <div className="community-bg-overlay" />
+        </div>
+
         <div className="wrap">
-          <div className="community-grid">
+          <div className="community-content reveal">
+            <div className="label" style={{ color: "var(--c-gold)" }}>
+              <span className="label-dot" style={{ background: "var(--c-gold)" }} />
+              Coast Connects
+            </div>
+            <h2 className="community-headline" style={{ color: "var(--c-white)" }}>
+              Brotherhood<br />With Your<br /><em>Backyard.</em>
+            </h2>
+            <p className="community-body" style={{ color: "rgba(255,255,255,0.65)" }}>
+              Monthly dinners, weekly formations, and quarterly roundtables for men
+              rooted in 30A. Built for the man who wants depth where he already lives.
+            </p>
 
-            <div className="community-photos reveal">
-              <div className="community-photo-main">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/community/1.jpg" alt="Brotherhood gathering" />
-              </div>
-              <div className="community-photo-float">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/retreats/past/1.jpg" alt="Men in formation" />
-              </div>
+            <div className="events community-events-dark">
+              {upcomingEvents.length > 0
+                ? upcomingEvents.map(ev => {
+                    const d = new Date(ev.startAt);
+                    const day = String(d.getDate()).padStart(2, "0");
+                    const mon = d.toLocaleString("default", { month: "short" }).toUpperCase();
+                    const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+                    const meta = [time, ev.location].filter(Boolean).join(" · ");
+                    return (
+                      <a key={ev.id} href="/events" className="event" style={{ textDecoration: "none" }}>
+                        <div className="event-date">
+                          <span className="event-d">{day}</span>
+                          <span className="event-m">{mon}</span>
+                        </div>
+                        <div className="event-info">
+                          <div className="event-name">{ev.title}</div>
+                          <div className="event-meta">{meta}</div>
+                        </div>
+                        <div className="event-arrow">→</div>
+                      </a>
+                    );
+                  })
+                : /* fallback skeleton while loading / no events */
+                  ["Brotherhood Dinner", "Morning Formation", "Business & Faith Roundtable"].map(name => (
+                    <div key={name} className="event" style={{ opacity: 0.4 }}>
+                      <div className="event-date">
+                        <span className="event-d">—</span>
+                        <span className="event-m">—</span>
+                      </div>
+                      <div className="event-info">
+                        <div className="event-name">{name}</div>
+                        <div className="event-meta">See calendar for dates</div>
+                      </div>
+                      <div className="event-arrow">→</div>
+                    </div>
+                  ))
+              }
             </div>
 
-            <div className="reveal">
-              <div className="label">
-                <span className="label-dot" />
-                Coast Connects
-              </div>
-              <h2 className="community-headline">
-                Brotherhood<br />With Your<br /><em>Backyard.</em>
-              </h2>
-              <p className="community-body">
-                Monthly dinners, weekly formations, and quarterly roundtables for men
-                rooted in 30A. Built for the man who wants depth where he already lives.
-              </p>
-
-              <div className="events">
-                {[
-                  { d: "14", m: "Jul", name: "Brotherhood Dinner",          meta: "7:00 PM · Santa Rosa Beach · 12 men" },
-                  { d: "22", m: "Jul", name: "Morning Formation",            meta: "6:30 AM · Inlet Beach · Weekly" },
-                  { d: "06", m: "Aug", name: "Business & Faith Roundtable", meta: "9:00 AM · Watersound · Quarterly" },
-                ].map(ev => (
-                  <div key={ev.name} className="event">
-                    <div className="event-date">
-                      <span className="event-d">{ev.d}</span>
-                      <span className="event-m">{ev.m}</span>
-                    </div>
-                    <div className="event-info">
-                      <div className="event-name">{ev.name}</div>
-                      <div className="event-meta">{ev.meta}</div>
-                    </div>
-                    <div className="event-arrow">→</div>
-                  </div>
-                ))}
-              </div>
-
-              <a href="#connect" className="hero-cta-btn" style={{ background: "var(--c-black)", color: "var(--c-white)" }}>
-                Stay Connected →
-              </a>
-            </div>
+            <a href="/events" className="hero-cta-btn" style={{ background: "var(--c-gold)", color: "var(--c-black)" }}>
+              View Full Calendar →
+            </a>
           </div>
         </div>
       </section>
@@ -533,6 +571,7 @@ export default function HomePage() {
               <a href="#community">Community</a>
               <a href="#coaching">Coaching</a>
               <a href="#retreats">Retreats</a>
+              <a href="/events">Events</a>
             </div>
             <div className="footer-col">
               <h4>Connect</h4>

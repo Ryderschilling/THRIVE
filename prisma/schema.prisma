@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "darwin-arm64", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -58,12 +60,20 @@ model Event {
   title       String
   description String?
   location    String?
+  photos      String[] @default([])
   startAt     DateTime
   endAt       DateTime?
+
+  // Recurring
+  isRecurring Boolean  @default(false)
+  rrule       String?  // e.g. "monthly:1,3:3" = 1st+3rd Wednesday
+  exceptions  String[] @default([]) // ISO date strings of skipped instances
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([startAt])
+  @@index([isRecurring])
 }
 
 model EventMember {
