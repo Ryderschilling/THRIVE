@@ -3,6 +3,7 @@ import "./redesign.css";
 
 import { Barlow, Inter } from "next/font/google";
 import type { ReactNode } from "react";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         suppressHydrationWarning
         className={`${barlow.variable} ${inter.variable}`}
       >
+        <LoadingScreen />
         {children}
       </body>
     </html>

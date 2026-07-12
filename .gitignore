@@ -42,3 +42,7 @@ next-env.d.ts
 
 /src/generated/prisma
 /generated
+
+# Large raw video source files (unused; keep out of git)
+public/images/hero-drone-clipped.mp4
+public/images/hero-drone.mp4.mp4
