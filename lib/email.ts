@@ -48,3 +48,35 @@ ${args.lookingForward || args.why || "—"}
   });
 }
 
+
+export async function sendJoinEmail(args: {
+  name: string;
+  email: string;
+  phone?: string;
+  interest?: string;
+  found?: string;
+  message?: string;
+}) {
+  const to = process.env.SIGNUP_NOTIFY_EMAIL || "josh@thriveco.net";
+  const from = process.env.SIGNUP_FROM_EMAIL || "THRIVE <onboarding@thriveco.net>";
+
+  if (!process.env.RESEND_API_KEY) return;
+
+  await resend.emails.send({
+    from,
+    to,
+    replyTo: args.email,
+    subject: `New THRIVE inquiry — ${args.name}`,
+    text: `
+NAME: ${args.name}
+EMAIL: ${args.email}
+PHONE: ${args.phone || "—"}
+
+INTERESTED IN: ${args.interest || "—"}
+FOUND US VIA: ${args.found || "—"}
+
+MESSAGE:
+${args.message || "—"}
+`.trim(),
+  });
+}

@@ -1,117 +1,157 @@
-import Image from "next/image";
 import Link from "next/link";
-import Section from "@/components/site/Section";
+
+import PageHero from "@/components/site/PageHero";
+import UpcomingEvents from "@/components/site/UpcomingEvents";
+import Testimonials from "@/components/site/Testimonials";
+import CtaBand from "@/components/site/CtaBand";
+import { rhythm } from "@/content/site";
+
+export const metadata = {
+  title: "Community",
+  description:
+    "Weekly formations, monthly dinners, and quarterly roundtables for men on 30A. Brotherhood you can drive to.",
+};
+
+const MOMENTS = [
+  { src: "/images/community/1.jpg", label: "Brotherhood dinner" },
+  { src: "/images/community/2.jpg", label: "Morning formation" },
+  { src: "/images/community/3.jpg", label: "Roundtable" },
+  { src: "/images/community/4.jpg", label: "On the coast" },
+];
 
 export default function CommunityPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden pt-24 md:pt-28">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/palm-leaves-bg.png"
-            alt=""
-            fill
-            priority
-            className="object-cover object-center opacity-70"
-          />
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="absolute inset-0 [background:radial-gradient(70%_60%_at_50%_35%,rgba(255,255,255,0.10)_0%,rgba(0,0,0,0.65)_70%,rgba(0,0,0,0.9)_100%)]" />
+      <PageHero
+        eyebrow="Coast Connects"
+        title={<>Brotherhood<br />With Your<br /><em>Backyard.</em></>}
+        lede="A rhythm you can actually keep. Weekly, monthly, quarterly, and twice a year off the grid, all within a short drive of 30A."
+        image="/images/community/3.jpg"
+      >
+        <div className="t-btns" style={{ marginTop: "2.25rem" }}>
+          <Link href="/join" className="t-btn t-btn-gold">
+            Get Involved <span className="ar">&rarr;</span>
+          </Link>
+          <Link href="/events" className="t-btn t-btn-ghost">
+            Full calendar
+          </Link>
         </div>
+      </PageHero>
 
-        <div className="relative mx-auto max-w-4xl px-6 pb-14 text-center space-y-4">
-          <div className="thrive-kicker">Community</div>
-
-          <h1 className="font-display text-5xl md:text-6xl leading-[1.03] text-white">
-            Connect with the THRIVE
-            <br />
-            Community
-          </h1>
-
-          <p className="mx-auto max-w-2xl text-white/70">
-            Brotherhood, gatherings, and events for men who want faith to govern leadership.
-          </p>
-        </div>
-
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-black" />
-      </section>
-
-      {/* Moments + Events */}
-      <Section tone="soft">
-        <div className="mx-auto max-w-6xl grid gap-6 md:grid-cols-[1.35fr_1fr]">
-          {/* Moments */}
-          <div className="thrive-glass p-6">
-            <div className="flex items-center justify-between">
-              <div className="thrive-kicker">Moments</div>
-
-              <Link
-                href="/email"
-                className="text-xs text-white/70 hover:text-white transition"
-              >
-                Stay connected →
-              </Link>
+      {/* The rhythm */}
+      <section className="t-sec">
+        <div className="t-ghost" aria-hidden="true">GATHER</div>
+        <div className="t-wrap">
+          <div className="t-head t-rv">
+            <div>
+              <div className="t-eyebrow">The rhythm</div>
+              <h2 className="t-h2">
+                What Happens,<br /><em>And How Often.</em>
+              </h2>
             </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              {[
-                "/images/community/1.jpg",
-                "/images/community/2.jpg",
-                "/images/community/3.jpg",
-                "/images/community/4.jpg",
-              ].map((src) => (
-                <div key={src} className="relative h-32 md:h-40 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
-                  <Image
-                    src={src}
-                    alt=""
-                    fill
-                    className="object-cover object-center transition-transform duration-[1400ms] ease-out hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/50" />
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-5 text-sm text-white/65">
-              Real moments from gatherings, brotherhood dinners, and coastal meetups.
+            <p className="t-lede">
+              Nothing here requires you to rearrange your life. It requires you to
+              show up.
             </p>
           </div>
 
-          {/* Upcoming Events */}
-          <div className="thrive-glass p-6">
-            <div className="thrive-kicker">Upcoming events</div>
-
-            <div className="mt-5 space-y-4">
-              {[
-                { title: "Monthly Brotherhood Dinner", meta: "30A · Monthly" },
-                { title: "Morning Formation", meta: "Inlet Beach · Weekly" },
-                {
-                  title: "Business & Faith Roundtable",
-                  meta: "Santa Rosa · Quarterly",
-                },
-              ].map((e) => (
-                <div
-                  key={e.title}
-                  className="rounded-xl border border-white/10 bg-black/20 p-4"
-                >
-                  <div className="text-sm text-white/90">{e.title}</div>
-                  <div className="mt-1 text-xs text-white/60">{e.meta}</div>
+          <div className="t-rows t-rv">
+            {rhythm.map((r) => (
+              <div key={r.title} className="t-row">
+                <div className="t-row-when">{r.when}</div>
+                <div>
+                  <div className="t-row-title">{r.title}</div>
+                  <div className="t-row-desc">{r.desc}</div>
                 </div>
-              ))}
+                <div className="t-row-meta">{r.meta}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Next up */}
+      <section className="t-sec raise tight">
+        <div className="t-wrap">
+          <div className="t-head t-rv">
+            <div>
+              <div className="t-eyebrow">Next up</div>
+              <h2 className="t-h2">
+                On The <em>Calendar.</em>
+              </h2>
             </div>
-
-            <Link
-              href="/email"
-              className="mt-4 block text-right text-xs text-white/60 transition hover:text-white"
-            >
-              View all events →
-            </Link>
-
-            <Link href="/email" className="thrive-btn w-full mt-6">
-              Join for event invites
+            <p className="t-lede">
+              Dates land here as they are set. Anyone is welcome at the open
+              gatherings.
+            </p>
+          </div>
+          <div className="t-rv">
+            <UpcomingEvents limit={4} />
+            <Link href="/events" className="t-btn t-btn-ghost" style={{ marginTop: "1.75rem" }}>
+              View full calendar <span className="ar">&rarr;</span>
             </Link>
           </div>
         </div>
-      </Section>
+      </section>
+
+      {/* Moments */}
+      <section className="t-sec">
+        <div className="t-wrap">
+          <div className="t-head-center t-rv">
+            <div className="t-eyebrow">Moments</div>
+            <h2 className="t-h2">
+              What It Looks <em>Like.</em>
+            </h2>
+          </div>
+          <div className="t-rgrid t-rvs">
+            <div className="t-rcard tall">
+              <div className="t-rcard-img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={MOMENTS[0].src} alt={MOMENTS[0].label} />
+              </div>
+              <div className="t-rcard-scrim" aria-hidden="true" />
+              <div className="t-rcard-info">
+                <div className="t-rcard-title">{MOMENTS[0].label}</div>
+              </div>
+            </div>
+            <div className="t-rstack">
+              {MOMENTS.slice(1).map((m) => (
+                <div key={m.src} className="t-rcard">
+                  <div className="t-rcard-img">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={m.src} alt={m.label} />
+                  </div>
+                  <div className="t-rcard-scrim" aria-hidden="true" />
+                  <div className="t-rcard-info">
+                    <div className="t-rcard-title">{m.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stories */}
+      <section className="t-sec cream">
+        <div className="t-wrap">
+          <div className="t-head-center t-rv">
+            <div className="t-eyebrow">Hear from the men</div>
+            <h2 className="t-h2">
+              What It Actually <em>Did.</em>
+            </h2>
+          </div>
+          <div className="t-rv">
+            <Testimonials />
+          </div>
+        </div>
+      </section>
+
+      <CtaBand
+        image="/images/community/4.jpg"
+        title={<>Pull Up A <em>Chair.</em></>}
+        body="Tell Josh what you are drawn to and he will point you at the next gathering that fits."
+      />
     </>
   );
 }

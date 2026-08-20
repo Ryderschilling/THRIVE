@@ -1,9 +1,13 @@
 import "./globals.css";
 import "./redesign.css";
+import "./system.css";
 
 import { Barlow, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import LoadingScreen from "@/components/LoadingScreen";
+import SiteNav from "@/components/site/SiteNav";
+import SiteFooter from "@/components/site/SiteFooter";
+import Reveal from "@/components/site/Reveal";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -19,9 +23,21 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "THRIVE 30a — Ministry, Discipleship, Encouragement",
+  metadataBase: new URL("https://www.thriveco.net"),
+  title: {
+    default: "THRIVE 30A · Brotherhood for Christian businessmen",
+    template: "%s · THRIVE 30A",
+  },
   description:
-    "A ministry and growth ecosystem for Christian businessmen on the 30A coast of Florida.",
+    "A ministry and growth ecosystem for Christian businessmen on the 30A coast of Florida. Brotherhood, formation, and kingdom impact.",
+  openGraph: {
+    title: "THRIVE 30A · Brotherhood for Christian businessmen",
+    description:
+      "Brotherhood, formation, and kingdom impact for men on Florida's Emerald Coast.",
+    url: "https://www.thriveco.net",
+    siteName: "THRIVE 30A",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -32,7 +48,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${barlow.variable} ${inter.variable}`}
       >
         <LoadingScreen />
-        {children}
+        <SiteNav />
+        <Reveal />
+        <main>{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

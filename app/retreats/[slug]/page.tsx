@@ -8,7 +8,7 @@ function formatDateRange(startISO: string, endISO: string) {
   const end = new Date(endISO + "T00:00:00");
   const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
   const fmtYear = new Intl.DateTimeFormat("en-US", { year: "numeric" });
-  return `${fmt.format(start)} — ${fmt.format(end)}, ${fmtYear.format(end)}`;
+  return `${fmt.format(start)} \u2013 ${fmt.format(end)}, ${fmtYear.format(end)}`;
 }
 
 export default function RetreatDetailPage(props: { params: { slug: string } }) {

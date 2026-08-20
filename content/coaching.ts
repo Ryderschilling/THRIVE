@@ -16,7 +16,7 @@ export type CoachingProduct = {
         title: "Thrive Personal",
         subtitle: "A private container for breakthrough.",
         description:
-          "High-touch coaching for men who want clarity, alignment, discipline, and forward motion—spiritually, personally, and practically.",
+          "High-touch coaching for men who want clarity, alignment, discipline, and forward motion: spiritually, personally, and practically.",
         bullets: [
           "Private coaching cadence (structured)",
           "Personal roadmap + accountability",
@@ -46,7 +46,7 @@ export type CoachingProduct = {
         title: "Thrive Executive",
         subtitle: "High-touch leadership and business support.",
         description:
-          "One-off calls for decision points, focus resets, accountability, or next-step strategy—grounded in purpose and direction.",
+          "One-off calls for decision points, focus resets, accountability, or next-step strategy, grounded in purpose and direction.",
         bullets: [
           "Executive-level structure",
           "Business alignment + leadership systems",

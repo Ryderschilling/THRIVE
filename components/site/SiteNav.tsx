@@ -1,30 +1,90 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { site } from "@/content/site";
 
 export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 80);
+    const fn = () => setScrolled(window.scrollY > 60);
     fn();
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   return (
-    <header className={`nav${scrolled ? " scrolled" : ""}`}>
-      <div className="nav-pill">
-        <a href="/" className="nav-brand">THRIVE<span>·30A</span></a>
-        <nav className="nav-links">
-          <a href="/#mission">About</a>
-          <a href="/#community">Community</a>
-          <a href="/#coaching">Coaching</a>
-          <a href="/#retreats">Retreats</a>
-          <a href="/events">Events</a>
-        </nav>
-        <a href="/#connect" className="nav-cta">Get Involved</a>
-      </div>
-    </header>
+    <>
+      <header className={`t-nav${scrolled || open ? " scrolled" : ""}`}>
+        <div className="t-nav-inner">
+          <Link href="/" className="t-nav-brand">
+            {site.name}
+            <span>{site.mark}</span>
+          </Link>
+
+          <nav className="t-nav-links">
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={isActive(item.href) ? "active" : undefined}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="t-nav-right">
+            <Link href={site.primaryCta.href} className="t-nav-cta">
+              {site.primaryCta.label}
+            </Link>
+            <button
+              type="button"
+              className={`t-burger${open ? " open" : ""}`}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {open && (
+        <div className="t-drawer" onClick={() => setOpen(false)}>
+          <Link href="/">Home</Link>
+          {site.nav.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
+          <Link href={site.primaryCta.href} className="t-btn t-btn-gold t-drawer-cta">
+            {site.primaryCta.label} <span className="ar">&rarr;</span>
+          </Link>
+          <div className="t-drawer-foot">
+            {site.cityLine}
+            <br />
+            {site.regionLine}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

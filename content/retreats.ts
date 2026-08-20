@@ -58,7 +58,7 @@ export const retreats: Retreat[] = [
     ],
 
     summary:
-      "A quiet, focused retreat for Christian businessmen pursuing depth, responsibility, and kingdom impact—held in a coastal environment designed to slow you down and sharpen you.",
+      "A quiet, focused retreat for Christian businessmen pursuing depth, responsibility, and kingdom impact, held in a coastal environment designed to slow you down and sharpen you.",
     whatToExpect: [
       "Morning formation and Scripture-led alignment",
       "Brotherhood table: honest conversations with strong men",
@@ -68,7 +68,7 @@ export const retreats: Retreat[] = [
     ],
     schedule: [
       {
-        dayLabel: "Day 1 — Arrival + Orientation",
+        dayLabel: "Day 1 · Arrival + Orientation",
         items: [
           "Arrival window + settle in",
           "Opening dinner",
@@ -77,7 +77,7 @@ export const retreats: Retreat[] = [
         ],
       },
       {
-        dayLabel: "Day 2 — Formation + Leadership",
+        dayLabel: "Day 2 · Formation + Leadership",
         items: [
           "Morning formation",
           "Leadership session + discussion",
@@ -86,7 +86,7 @@ export const retreats: Retreat[] = [
         ],
       },
       {
-        dayLabel: "Day 3 — Kingdom Impact + Business",
+        dayLabel: "Day 3 · Kingdom Impact + Business",
         items: [
           "Morning formation",
           "Kingdom impact framework",
@@ -95,7 +95,7 @@ export const retreats: Retreat[] = [
         ],
       },
       {
-        dayLabel: "Day 4 — Departures",
+        dayLabel: "Day 4 · Departures",
         items: ["Final prayer + send-off", "Departures"],
       },
     ],
@@ -120,7 +120,7 @@ export const retreats: Retreat[] = [
     galleryImages: ["/images/retreats/emerald-house/cover.jpg"],
 
     summary:
-      "A faith-fueled men's retreat for those ready to rise from stagnation — addressing the places where life, leadership, and calling feel stuck.",
+      "A faith-fueled men's retreat for those ready to rise from stagnation, addressing the places where life, leadership, and calling feel stuck.",
     whatToExpect: [
       "Deep-dive sessions on identity and calling",
       "Honest brotherhood conversations",
@@ -130,11 +130,11 @@ export const retreats: Retreat[] = [
     ],
     schedule: [
       {
-        dayLabel: "Day 1 — Arrival",
+        dayLabel: "Day 1 · Arrival",
         items: ["Arrival + settle in", "Opening dinner", "Orientation"],
       },
       {
-        dayLabel: "Day 2 — Identity + Rising",
+        dayLabel: "Day 2 · Identity + Rising",
         items: [
           "Morning formation",
           "Identity session",
@@ -143,7 +143,7 @@ export const retreats: Retreat[] = [
         ],
       },
       {
-        dayLabel: "Day 3 — Calling + Business",
+        dayLabel: "Day 3 · Calling + Business",
         items: [
           "Morning formation",
           "Calling and clarity workshop",
@@ -152,7 +152,7 @@ export const retreats: Retreat[] = [
         ],
       },
       {
-        dayLabel: "Day 4 — Departures",
+        dayLabel: "Day 4 · Departures",
         items: ["Final prayer + send-off", "Departures"],
       },
     ],

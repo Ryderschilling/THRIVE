@@ -118,7 +118,7 @@ export default function RetreatGalleryPage() {
 
                 <p>
                   Set in Santa Rosa Beach, Florida (30A), this two-night experience is intentionally crafted to create
-                  space for rest, reflection, and alignment with God’s purpose—both personally and professionally.
+                  space for rest, reflection, and alignment with God’s purpose, both personally and professionally.
                   While rooted in the local THRIVE community, men will be joining from across the country, creating a
                   unique and divinely aligned intersection of faith, leadership, and brotherhood.
                 </p>
@@ -132,7 +132,7 @@ export default function RetreatGalleryPage() {
                 </p>
 
                 <p>
-                  Every detail is designed to support depth, responsibility, and kingdom-minded impact—creating an
+                  Every detail is designed to support depth, responsibility, and kingdom-minded impact, creating an
                   environment where men can be refreshed, encouraged, and strengthened in Christ alongside other
                   leaders walking a similar path.
                 </p>

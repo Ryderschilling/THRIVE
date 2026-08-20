@@ -1,41 +1,56 @@
+import Link from "next/link";
+import { site } from "@/content/site";
+
 export default function SiteFooter() {
   return (
-    <footer className="footer">
-      <div className="wrap">
-        <div className="footer-grid">
+    <footer className="t-footer">
+      <div className="t-wrap">
+        <div className="t-footer-grid">
           <div>
-            <div className="footer-brand">THRIVE<span>·30A</span></div>
-            <p className="footer-tag">
-              A ministry and growth ecosystem for Christian businessmen on the
-              30A coast of Florida.
-            </p>
+            <div className="t-footer-brand">
+              {site.name}
+              <span>{site.mark}</span>
+            </div>
+            <p className="t-footer-tag">{site.footerLine}</p>
           </div>
-          <div className="footer-col">
+
+          <div className="t-footer-col">
             <h4>Navigate</h4>
-            <a href="/#mission">About</a>
-            <a href="/#community">Community</a>
-            <a href="/#coaching">Coaching</a>
-            <a href="/#retreats">Retreats</a>
-            <a href="/events">Events</a>
+            <Link href="/">Home</Link>
+            {site.nav.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
           </div>
-          <div className="footer-col">
+
+          <div className="t-footer-col">
             <h4>Connect</h4>
-            <a href="/#connect">Newsletter</a>
-            <a href="#">Instagram</a>
-            <a href="#">Skool</a>
-            <a href="#">Contact</a>
+            <Link href={site.primaryCta.href}>Get Involved</Link>
+            <Link href="/email">The Monthly Letter</Link>
+            {site.social.map((s) => (
+              <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
+                {s.label}
+              </a>
+            ))}
           </div>
-          <div className="footer-col">
+
+          <div className="t-footer-col">
             <h4>Located</h4>
-            <a href="#">Santa Rosa Beach, FL</a>
-            <a href="#">30A · Emerald Coast</a>
-            <a href="#">30.2769° N</a>
-            <a href="#">86.0080° W</a>
+            <span>{site.cityLine}</span>
+            <span>{site.regionLine}</span>
+            <span>30.2769&deg; N</span>
+            <span>86.0080&deg; W</span>
           </div>
         </div>
-        <div className="footer-bottom">
-          <span>© 2026 THRIVE 30A · All rights reserved</span>
-          <span>Santa Rosa Beach, FL · Emerald Coast</span>
+
+        <div className="t-footer-bottom">
+          <span>
+            &copy; {new Date().getFullYear()} {site.name} {site.location} &middot; All rights reserved
+          </span>
+          <span>
+            {site.cityLine} &middot; {site.regionLine}
+          </span>
         </div>
       </div>
     </footer>
